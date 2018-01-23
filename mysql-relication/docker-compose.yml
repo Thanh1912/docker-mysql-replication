@@ -1,0 +1,19 @@
+version: '2'
+services:
+    master_001:
+        build: mysql-relication
+
+
+        volumes:
+             - "/data/mastermysql:/var/lib/mysql"
+             
+    slave_001:
+        build: mysql-relication
+
+        environment:
+
+             - MASTER_HOST=master_001
+        links :
+             - master_001
+        volumes:
+             - "/data/slavemysql:/var/lib/mysql"
