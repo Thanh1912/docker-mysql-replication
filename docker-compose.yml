@@ -1,32 +1,21 @@
 version: '2'
 services:
     master_001:
-        image: actency/docker-mysql-replication:5.7
-        container_name: master_001
-        ports:
-            - 3306
+        build: mysql-relication
         environment:
-             - MYSQL_ROOT_PASSWORD=mysqlroot
-             - MYSQL_USER=example_user
-             - MYSQL_PASSWORD=mysqlpwd
-             - MYSQL_DATABASE=example
-             - REPLICATION_USER=replication_user
-             - REPLICATION_PASSWORD=myreplpassword
-        volumes:
-             - "/data/mastermysql:/var/lib/mysql"
+             - MYSQL_ROOT_PASSWORD=123456
     slave_001:
-        image: actency/docker-mysql-replication:5.7
-        container_name: slave_001
-        ports:
-            - 3306
+        build: mysql-relication
         environment:
-             - MYSQL_ROOT_PASSWORD=mysqlroot
-             - MYSQL_USER=example_user
-             - MYSQL_PASSWORD=mysqlpwd
-             - MYSQL_DATABASE=example
-             - REPLICATION_USER=replication_user
-             - REPLICATION_PASSWORD=myreplpassword
+             - MASTER_HOST=master_001
+             - MYSQL_ROOT_PASSWORD=123456
         links :
              - master_001
-        volumes:
-             - "/data/slavemysql:/var/lib/mysql"
+    haproxy:
+        build : haproxy
+        links:
+             - master_001
+             - slave_001
+        ports:
+             - "8080:8080"
+              - "8080:8080"

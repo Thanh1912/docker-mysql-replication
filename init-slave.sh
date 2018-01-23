@@ -8,6 +8,14 @@
 REPLICATION_HEALTH_GRACE_PERIOD=${REPLICATION_HEALTH_GRACE_PERIOD:-3}
 REPLICATION_HEALTH_TIMEOUT=${REPLICATION_HEALTH_TIMEOUT:-10}
 
+# health check
+until mysql -h${MASTER_HOST} -uroot -p$MYSQL_ROOT_PASSWORD -e "select 1 from dual" | grep -q 1;
+do
+    >&2 echo "Replication master is unavailable - sleeping"
+    sleep 1
+done
+>&2 echo "Replication master is up - setting slave"
+
 check_slave_health () {
   echo Checking replication health:
   status=$(mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "SHOW SLAVE STATUS\G")
@@ -55,7 +63,7 @@ check_slave_health
 
 echo Waiting for health grace period and slave to be still healthy:
 sleep $REPLICATION_HEALTH_GRACE_PERIOD
-
+echo ERROR: Replication not healthy, health timeout reached, failing.
 counter=0
 while ! check_slave_health; do
   if (( counter >= $REPLICATION_HEALTH_TIMEOUT )); then

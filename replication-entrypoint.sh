@@ -40,12 +40,14 @@ mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "\
   IDENTIFIED BY '$REPLICATION_PASSWORD'; \
   FLUSH PRIVILEGES; \
 "
+echo =====================create user check status=================
+mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "CREATE USER 'haproxy_check'@'%';"
 EOF
 else
   # TODO: make server-id discoverable
-  export SERVER_ID=2
-  echo show server id
-  echo $SERVER_ID
+  export SERVER_ID=`date +%s`
+  echo --------------------------------------------------------------------------------------------------
+  echo THONG TIN HIEN THI $SERVER_ID
   cp -v /init-slave.sh /docker-entrypoint-initdb.d/
   cat > /etc/mysql/mysql.conf.d/repl-slave.cnf << EOF
 [mysqld]
