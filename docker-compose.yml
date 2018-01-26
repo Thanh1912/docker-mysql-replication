@@ -14,8 +14,7 @@ services:
     haproxy:
         build : haproxy
         links:
-             - master_001
-             - slave_001
-        ports:
-             - "8080:8080"
-              - "8080:8080"
+            - master_001
+            - slave_001
+#        ports:
+#            - "8080:8080"
